@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 // =====================
 // NAV — Smooth scroll
 // =====================
-document.querySelectorAll("nav a").forEach(link => {
+document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener("click", (e) => {
     e.preventDefault()
     gsap.to(window, {
