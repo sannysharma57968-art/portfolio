@@ -12,8 +12,6 @@
     "vite": "^8.0.10"
   },
   "dependencies": {
-    "gsap": "^3.15.0",
-    "locomotive-scroll": "^5.0.1",
-    "three": "^0.184.0"
+    "gsap": "^3.15.0"
   }
 }
