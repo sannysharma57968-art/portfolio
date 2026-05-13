@@ -236,20 +236,6 @@
       fill: #fff;
       transform: scale(1.1);
     }
-
-    .icon:focus-visible,
-    .filter-btn:focus-visible,
-    .btn-primary:focus-visible,
-    .btn-secondary:focus-visible,
-    .form-submit:focus-visible,
-    .card:focus-visible {
-      outline: 2px solid #a855f7;
-      outline-offset: 3px;
-    }
-
-    .social-placeholder {
-      user-select: none;
-    }
     
     /* ===================== */
     /* HERO — RIGHT SIDE (CARD) */
@@ -1113,11 +1099,6 @@ a.contact-value:hover {
   box-shadow: 0 8px 20px rgba(168,85,247,0.4);
 }
 
-.form-submit:disabled {
-  cursor: wait;
-  opacity: 0.75;
-}
-
 .magnetic {
   display: inline-block;
   padding: 14px 28px;
@@ -1576,23 +1557,6 @@ footer {
   }
 }
 
-@media (hover: none), (pointer: coarse) {
-  .cursor {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
 /* Small mobile — 480px se chhota */
 @media (max-width: 480px) {
 
@@ -1612,3 +1576,4 @@ footer {
     font-size: 28px;
   }
 }
+

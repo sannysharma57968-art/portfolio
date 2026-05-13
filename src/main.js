@@ -4,122 +4,106 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-const hasFinePointer = window.matchMedia("(pointer: fine)").matches
-
 // =====================
-// NAV - Smooth scroll
+// NAV — Smooth scroll
 // =====================
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener("click", (e) => {
-    const target = link.getAttribute("href")
-    if (!target || target === "#" || !document.querySelector(target)) return
-
     e.preventDefault()
     gsap.to(window, {
-      duration: prefersReducedMotion ? 0 : 1,
-      scrollTo: target,
+      duration: 1,
+      scrollTo: link.getAttribute("href"),
       ease: "power3.inOut"
     })
   })
 })
 
 // =====================
-// HERO - Text animations
+// HERO — Text animations
 // =====================
-if (!prefersReducedMotion) {
-  gsap.from(".hero-text span", {
-    y: 80, opacity: 0, duration: 0.8,
-    stagger: 0.12, ease: "power3.out",
-    delay: 0.1, clearProps: "all"
-  })
+gsap.from(".hero-text span", {
+  y: 80, opacity: 0, duration: 0.8,
+  stagger: 0.12, ease: "power3.out",
+  delay: 0.1, clearProps: "all"
+})
 
-  gsap.from(".hero-sub", {
-    y: 25, opacity: 0, duration: 0.7,
-    ease: "power3.out", delay: 0.5, clearProps: "all"
-  })
+gsap.from(".hero-sub", {
+  y: 25, opacity: 0, duration: 0.7,
+  ease: "power3.out", delay: 0.5, clearProps: "all"
+})
 
-  gsap.from(".btn-primary, .btn-secondary", {
-    y: 15, opacity: 0, duration: 0.4,
-    stagger: 0.1, ease: "power3.out",
-    delay: 0.55, clearProps: "all"
-  })
+gsap.from(".btn-primary, .btn-secondary", {
+  y: 15, opacity: 0, duration: 0.4,
+  stagger: 0.1, ease: "power3.out",
+  delay: 0.55, clearProps: "all"
+})
 
-  gsap.from(".hero-social", {
-    y: 15, opacity: 0, duration: 0.4,
-    ease: "power3.out", delay: 0.7, clearProps: "all"
-  })
-}
+gsap.from(".hero-social", {
+  y: 15, opacity: 0, duration: 0.4,
+  ease: "power3.out", delay: 0.7, clearProps: "all"
+})
 
 // =====================
 // CURSOR
 // =====================
 const cursor = document.querySelector(".cursor")
 
-if (cursor && hasFinePointer && !prefersReducedMotion) {
-  const cursorX = gsap.quickTo(cursor, "x", { duration: 0.1, ease: "power2.out" })
-  const cursorY = gsap.quickTo(cursor, "y", { duration: 0.1, ease: "power2.out" })
-
-  window.addEventListener("mousemove", (e) => {
-    cursorX(e.clientX)
-    cursorY(e.clientY)
+window.addEventListener("mousemove", (e) => {
+  gsap.to(cursor, {
+    x: e.clientX,
+    y: e.clientY,
+    duration: 0.1
   })
-}
+})
 
 // =====================
-// PROFILE CARD - 3D tilt
+// PROFILE CARD — 3D tilt
 // =====================
-const profileCard = document.querySelector(".profile-card")
+const card = document.querySelector(".profile-card")
 
-if (profileCard && hasFinePointer && !prefersReducedMotion) {
-  profileCard.addEventListener("mousemove", (e) => {
-    const rect = profileCard.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const rotateX = (y - centerY) / 15
-    const rotateY = (centerX - x) / 15
-    const xPercent = (x / rect.width) * 100
-    const yPercent = (y / rect.height) * 100
+card.addEventListener("mousemove", (e) => {
+  const rect = card.getBoundingClientRect()
+  const x = e.clientX - rect.left
+  const y = e.clientY - rect.top
+  const centerX = rect.width / 2
+  const centerY = rect.height / 2
+  const rotateX = (y - centerY) / 15
+  const rotateY = (centerX - x) / 15
+  card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+  const xPercent = (x / rect.width) * 100
+  const yPercent = (y / rect.height) * 100
+  card.style.setProperty("--x", `${xPercent}%`)
+  card.style.setProperty("--y", `${yPercent}%`)
+})
 
-    profileCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-    profileCard.style.setProperty("--x", `${xPercent}%`)
-    profileCard.style.setProperty("--y", `${yPercent}%`)
-  })
-
-  profileCard.addEventListener("mouseleave", () => {
-    profileCard.style.transform = "rotateX(0deg) rotateY(0deg)"
-  })
-}
+card.addEventListener("mouseleave", () => {
+  card.style.transform = `rotateX(0deg) rotateY(0deg)`
+})
 
 // =====================
 // STATS COUNTER
 // =====================
 const stats = document.querySelectorAll(".stat-num")
 
-if (profileCard && stats.length) {
-  ScrollTrigger.create({
-    trigger: ".profile-card",
-    start: "top 80%",
-    once: true,
-    onEnter: () => {
-      stats.forEach(stat => {
-        const target = parseInt(stat.getAttribute("data-target"), 10)
-        const obj = { val: 0 }
-
-        gsap.to(obj, {
-          val: Number.isNaN(target) ? 0 : target,
-          duration: prefersReducedMotion ? 0 : 3,
-          ease: "power2.out",
-          onUpdate: function() {
-            stat.textContent = Math.ceil(obj.val) + "+"
-          }
-        })
+ScrollTrigger.create({
+  trigger: ".profile-card",
+  start: "top 80%",
+  once: true,
+  onEnter: () => {
+    stats.forEach(stat => {
+      const target = parseInt(stat.getAttribute("data-target"))
+      const obj = { val: 0 }
+      gsap.to(obj, {
+        val: target,
+        duration: 3,
+        ease: "power2.out",
+        onUpdate: function() {
+          stat.textContent = Math.ceil(obj.val) + "+"
+        }
       })
-    }
-  })
-}
+    })
+  }
+})
 
 // =====================
 // PROJECTS
@@ -153,8 +137,6 @@ const projects = [
 
 function renderProjects(filter = "all") {
   const grid = document.getElementById("projects-grid")
-  if (!grid) return
-
   const filtered = filter === "all"
     ? projects
     : projects.filter(p => p.category === filter)
@@ -163,7 +145,7 @@ function renderProjects(filter = "all") {
     <div class="project-card" data-category="${p.category}">
       <div class="project-img">
         ${p.image
-          ? `<img src="${p.image}" alt="${p.title}" loading="lazy" />`
+          ? `<img src="${p.image}" alt="${p.title}" />`
           : `<div class="project-placeholder">
                <span>🖥️</span>
                <p>Screenshot Coming Soon</p>
@@ -171,7 +153,7 @@ function renderProjects(filter = "all") {
         }
         <div class="project-overlay">
           ${p.liveUrl && p.liveUrl !== "#"
-            ? `<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="project-live">Live ↗</a>`
+            ? `<a href="${p.liveUrl}" target="_blank" class="project-live">Live ↗</a>`
             : `<span class="project-soon">Coming Soon</span>`
           }
         </div>
@@ -182,11 +164,11 @@ function renderProjects(filter = "all") {
         <p>${p.description}</p>
         <div class="project-links">
           ${p.liveUrl && p.liveUrl !== "#"
-            ? `<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="project-link-live">View Live ↗</a>`
+            ? `<a href="${p.liveUrl}" target="_blank" class="project-link-live">View Live ↗</a>`
             : ""
           }
           ${p.githubUrl
-            ? `<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-link-github">GitHub →</a>`
+            ? `<a href="${p.githubUrl}" target="_blank" class="project-link-github">GitHub →</a>`
             : ""
           }
         </div>
@@ -206,81 +188,78 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
 renderProjects()
 
 // =====================
-// SERVICES - CLICK TO CONTACT
+// SERVICES → CLICK TO CONTACT
 // =====================
-const serviceCards = document.querySelectorAll("#services .card")
+const serviceCards = document.querySelectorAll("#services .card");
 
 serviceCards.forEach(card => {
-  card.setAttribute("role", "button")
-  card.setAttribute("tabindex", "0")
-  card.setAttribute("aria-label", "Go to contact form")
-
-  const goToContact = () => {
-    if (!document.querySelector("#contact")) return
-
+  card.addEventListener("click", () => {
     gsap.to(window, {
-      duration: prefersReducedMotion ? 0 : 1,
+      duration: 1,
       scrollTo: "#contact",
       ease: "power3.inOut"
-    })
-  }
-
-  card.addEventListener("click", goToContact)
-  card.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      goToContact()
-    }
-  })
-})
+    });
+  });
+});
 
 // =====================
 // CONTACT FORM
 // =====================
-const contactForm = document.getElementById("contact-form")
 
-if (contactForm) {
-  contactForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
+const contactForm = document.getElementById("contact-form");
 
-    const formData = new FormData(contactForm)
-    const submitBtn = contactForm.querySelector(".form-submit")
+contactForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    if (submitBtn) {
-      submitBtn.textContent = "Sending..."
-      submitBtn.disabled = true
-    }
+  const formData = new FormData(contactForm);
 
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData
-      })
+  const submitBtn = contactForm.querySelector(".form-submit");
 
-      const result = await response.json()
+  // Button loading state
+  submitBtn.innerHTML = "Sending...";
+  submitBtn.disabled = true;
 
-      if (result.success) {
-        const toast = document.getElementById("toast")
+  try {
 
-        if (toast) {
-          toast.classList.add("show")
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData
+    });
 
-          setTimeout(() => {
-            toast.classList.remove("show")
-          }, 3000)
-        }
+    const result = await response.json();
 
-        contactForm.reset()
-      } else {
-        alert("Something went wrong!")
-      }
-    } catch (error) {
-      alert("Error sending message!")
-    }
+    if (result.success) {
 
-    if (submitBtn) {
-      submitBtn.textContent = "Send Message →"
-      submitBtn.disabled = false
-    }
-  })
+      const toast = document.getElementById("toast");
+
+if (toast) {
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+
 }
+      // Reset form
+      contactForm.reset();
+
+    } else {
+
+      alert("Something went wrong!");
+
+    }
+
+  } catch (error) {
+
+    alert("Error sending message!");
+
+  }
+
+  // Restore button
+  submitBtn.textContent = "Send Message →";
+  submitBtn.disabled = false;
+
+});
+
+
